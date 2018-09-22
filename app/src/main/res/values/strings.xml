@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Dog Pictures</string>
+    <string name="dog_pictures">Dog Pictures</string>
+    <string name="breed">Breed</string>
+    <string name="give_me_dogs">Give Me Dogs</string>
+    <string name="more_dogs">More Dogs!</string>
+    <string name="loading">Loading...</string>
+    <string-array name="dog_array">
+        <item>Corgi</item>
+        <item>Husky</item>
+        <item>Labrador</item>
+        <!--<item>Shiba Inu</item>-->
+        <item>Samoyeds</item>
+        <item>Doggos</item>
+        <item>Puppies</item>
+    </string-array>
+</resources>
