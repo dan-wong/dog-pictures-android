@@ -2,7 +2,9 @@ package com.daniel.dogpictures.activities;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -52,6 +54,8 @@ import permissions.dispatcher.RuntimePermissions;
 
 @RuntimePermissions
 public class DogActivity extends AppCompatActivity implements RedditScraperCallback, FileWriterCallback {
+    private static final String FIRST_LAUNCH = "com.daniel.dogpictures.first.launch";
+
     private List<RedditImage> redditImagesList = new ArrayList<>();
 
     @BindView(R.id.titleTextView) TextView titleTextView;
@@ -69,6 +73,8 @@ public class DogActivity extends AppCompatActivity implements RedditScraperCallb
         setContentView(R.layout.activity_dog);
         ButterKnife.bind(this);
 
+        checkInitialLaunch();
+
         dogBreed = DogBreed.fromString(getIntent().getStringExtra(MainActivity.DOG_BREED));
         setTitle(dogBreed.getName());
 
@@ -76,6 +82,28 @@ public class DogActivity extends AppCompatActivity implements RedditScraperCallb
         progressBar.setVisibility(View.VISIBLE);
 
         RedditScraper.getImagesFromSubreddit(this, dogBreed.getSubreddit(), "", this);
+    }
+
+    private void checkInitialLaunch() {
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        boolean firstLaunch = sharedPref.getBoolean(FIRST_LAUNCH, true);
+
+        if (firstLaunch) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Hot Tip!")
+                    .setMessage("You can save the cute dogs by long pressing the image. A dialog will show up asking you if you want to save the image." +
+                            "To save the image, click 'Yes'.")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putBoolean(FIRST_LAUNCH, false);
+            editor.apply();
+        }
     }
 
     @OnClick(R.id.moreDogsButton)
