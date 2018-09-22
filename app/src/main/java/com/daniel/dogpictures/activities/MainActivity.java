@@ -1,20 +1,20 @@
 package com.daniel.dogpictures.activities;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.daniel.dogpictures.R;
+import com.daniel.dogpictures.util.InternetUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
+import es.dmoral.toasty.Toasty;
 
 public class MainActivity extends AppCompatActivity {
     public static final String DOG_BREED = "com.daniel.dogpictures.dog.breed";
@@ -43,9 +43,13 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.getDogsButton)
     public void getDogsButton() {
-        Intent intent = new Intent(getApplicationContext(), DogActivity.class);
-        intent.putExtra(DOG_BREED, dogBreed);
-        startActivity(intent);
+        if (!InternetUtil.isOnline()) {
+            Toasty.warning(getApplicationContext(), "No Internet Access!", Toast.LENGTH_SHORT, true).show();
+        } else {
+            Intent intent = new Intent(getApplicationContext(), DogActivity.class);
+            intent.putExtra(DOG_BREED, dogBreed);
+            startActivity(intent);
+        }
     }
 
     @OnItemSelected(R.id.dogBreedsSpinner)
