@@ -76,7 +76,7 @@ public class DogActivity extends AppCompatActivity implements RedditScraperCallb
 
     @OnClick(R.id.moreDogsButton)
     public void moreDogsButton() {
-        if (currentImage == redditImagesList.size() - 1) {
+        if (currentImage + 1 >= redditImagesList.size()) {
             RedditScraper.getImagesFromSubreddit(
                     this,
                     currentDogBreed.toLowerCase(),
@@ -175,7 +175,7 @@ public class DogActivity extends AppCompatActivity implements RedditScraperCallb
 
         currentImage = 0;
         redditImagesList = images;
-        setImage(redditImagesList.get(currentImage++));
+        moreDogsButton();
 
         progressBar.setVisibility(View.INVISIBLE);
         moreDogsButton.setEnabled(true);

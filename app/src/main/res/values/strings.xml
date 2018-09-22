@@ -15,6 +15,7 @@
     <string name="an_error_occurred">An error occurred :(</string>
     <string name="external_storage_not_mounted">External Storage not mounted!</string>
     <string name="image_saved">Image saved!</string>
+
     <string-array name="dog_array">
         <item>Corgi</item>
         <item>Husky</item>

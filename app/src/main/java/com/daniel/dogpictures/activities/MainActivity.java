@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.daniel.dogpictures.R;
 import com.daniel.dogpictures.util.InternetUtil;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -19,6 +20,8 @@ import es.dmoral.toasty.Toasty;
 public class MainActivity extends AppCompatActivity {
     public static final String DOG_BREED = "com.daniel.dogpictures.dog.breed";
 
+    private FirebaseAnalytics mFirebaseAnalytics;
+
     private String dogBreed = "Corgi";
 
     @BindView(R.id.dogBreedsSpinner) Spinner spinner;
@@ -28,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         setupSpinner();
     }
@@ -46,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
         if (!InternetUtil.isOnline()) {
             Toasty.warning(getApplicationContext(), "No Internet Access!", Toast.LENGTH_SHORT, true).show();
         } else {
+            logFirebaseEvent();
+
             Intent intent = new Intent(getApplicationContext(), DogActivity.class);
             intent.putExtra(DOG_BREED, dogBreed);
             startActivity(intent);
@@ -55,5 +62,11 @@ public class MainActivity extends AppCompatActivity {
     @OnItemSelected(R.id.dogBreedsSpinner)
     public void dogBreedsSpinnerItemSelected(Spinner spinner, int position) {
         dogBreed = spinner.getItemAtPosition(position).toString();
+    }
+
+    private void logFirebaseEvent() {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, dogBreed);
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
     }
 }
