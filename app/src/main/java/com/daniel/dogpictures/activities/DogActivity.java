@@ -1,6 +1,7 @@
 package com.daniel.dogpictures.activities;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.daniel.dogpictures.DogBreed;
 import com.daniel.dogpictures.R;
 import com.daniel.dogpictures.RedditImage;
 import com.daniel.dogpictures.async.filewriter.FileWriter;
@@ -58,7 +60,8 @@ public class DogActivity extends AppCompatActivity implements RedditScraperCallb
     @BindView(R.id.moreDogsButton) Button moreDogsButton;
 
     private int currentImage = 0;
-    private String currentDogBreed;
+    private DogBreed dogBreed;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,12 +69,13 @@ public class DogActivity extends AppCompatActivity implements RedditScraperCallb
         setContentView(R.layout.activity_dog);
         ButterKnife.bind(this);
 
-        currentDogBreed = getIntent().getStringExtra(MainActivity.DOG_BREED);
-        setTitle(currentDogBreed);
+        dogBreed = DogBreed.fromString(getIntent().getStringExtra(MainActivity.DOG_BREED));
+        setTitle(dogBreed.getName());
 
         moreDogsButton.setEnabled(false);
         progressBar.setVisibility(View.VISIBLE);
-        RedditScraper.getImagesFromSubreddit(this, currentDogBreed.toLowerCase(), "", this);
+
+        RedditScraper.getImagesFromSubreddit(this, dogBreed.getSubreddit(), "", this);
     }
 
     @OnClick(R.id.moreDogsButton)
@@ -79,7 +83,7 @@ public class DogActivity extends AppCompatActivity implements RedditScraperCallb
         if (currentImage + 1 >= redditImagesList.size()) {
             RedditScraper.getImagesFromSubreddit(
                     this,
-                    currentDogBreed.toLowerCase(),
+                    dogBreed.getSubreddit(),
                     redditImagesList.get(redditImagesList.size() - 1).id,
                     this);
         } else {
@@ -112,7 +116,6 @@ public class DogActivity extends AppCompatActivity implements RedditScraperCallb
                         .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 callFileWriterAsyncTask(directory, image);
-                                Toasty.info(getApplicationContext(), "Saving...", Toast.LENGTH_SHORT, true).show();
                             }
                         })
                         .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -129,11 +132,13 @@ public class DogActivity extends AppCompatActivity implements RedditScraperCallb
     }
 
     private void callFileWriterAsyncTask(File directory, RedditImage image) {
+        progressDialog = ProgressDialog.show(this, "Saving Image", "Please wait...");
         new FileWriterAsyncTask(directory, image, this).execute();
     }
 
     @Override
     public void result(Boolean result) {
+        progressDialog.dismiss();
         if (result) {
             Toasty.success(this, getString(R.string.image_saved), Toast.LENGTH_SHORT, true).show();
         } else {
@@ -142,7 +147,7 @@ public class DogActivity extends AppCompatActivity implements RedditScraperCallb
     }
 
     private void setImage(RedditImage redditImage) {
-        titleTextView.setText(StringUtils.abbreviate(redditImage.title, 200));
+        titleTextView.setText(StringUtils.abbreviate(redditImage.title, 100));
         progressBar.setVisibility(View.VISIBLE);
 
         Glide.with(this)

@@ -7,6 +7,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.daniel.dogpictures.DogBreed;
 import com.daniel.dogpictures.R;
 import com.daniel.dogpictures.util.InternetUtil;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -38,11 +39,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupSpinner() {
-        final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+        ArrayAdapter<DogBreed> adapter = new ArrayAdapter<>(
                 this,
-                R.array.dog_array,
-                android.R.layout.simple_spinner_dropdown_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                R.layout.support_simple_spinner_dropdown_item,
+                DogBreed.values()
+        );
+        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
     }
 
