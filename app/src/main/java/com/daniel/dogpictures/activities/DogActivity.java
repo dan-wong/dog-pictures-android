@@ -63,7 +63,7 @@ public class DogActivity extends AppCompatActivity implements RedditScraperCallb
     @BindView(R.id.progressBar) ProgressBar progressBar;
     @BindView(R.id.moreDogsButton) Button moreDogsButton;
 
-    private int currentImage = 0;
+    private int currentImage = -1;
     private DogBreed dogBreed;
     private ProgressDialog progressDialog;
 
@@ -115,7 +115,7 @@ public class DogActivity extends AppCompatActivity implements RedditScraperCallb
                     redditImagesList.get(redditImagesList.size() - 1).id,
                     this);
         } else {
-            setImage(redditImagesList.get(currentImage++));
+            setImage(redditImagesList.get(++currentImage));
         }
     }
 
@@ -127,7 +127,7 @@ public class DogActivity extends AppCompatActivity implements RedditScraperCallb
 
     @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     public void saveImage() {
-        if (currentImage == 0) {
+        if (currentImage <= 0) {
             return;
         }
 
@@ -206,7 +206,7 @@ public class DogActivity extends AppCompatActivity implements RedditScraperCallb
             return;
         }
 
-        currentImage = 0;
+        currentImage = -1;
         redditImagesList = images;
         moreDogsButton();
 

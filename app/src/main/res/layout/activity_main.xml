@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:paddingStart="8dp"
-            android:text="@string/breed" />
+            android:text="@string/categories" />
 
         <Spinner
             android:id="@+id/dogBreedsSpinner"

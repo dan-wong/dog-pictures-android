@@ -2,7 +2,7 @@
     <string name="app_name">Dog Pictures</string>
     <string name="app_name_folder">DogPictures</string>
     <string name="dog_pictures">Dog Pictures</string>
-    <string name="breed">Breed</string>
+    <string name="categories">Categories</string>
     <string name="give_me_dogs">Give Me Dogs</string>
     <string name="more_dogs">More Dogs!</string>
     <string name="loading">Loading…</string>

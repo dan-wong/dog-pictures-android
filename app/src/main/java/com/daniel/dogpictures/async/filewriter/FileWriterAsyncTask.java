@@ -39,10 +39,10 @@ public class FileWriterAsyncTask extends AsyncTask<Void, Void, Boolean> {
                 }
 
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 95, stream);
                 byte[] byteArray = stream.toByteArray();
 
-                outputStream = new FileOutputStream(new File(directory, redditImage.title + ".png"));
+                outputStream = new FileOutputStream(new File(directory, redditImage.title + ".jpg"));
                 outputStream.write(byteArray);
                 outputStream.close();
 

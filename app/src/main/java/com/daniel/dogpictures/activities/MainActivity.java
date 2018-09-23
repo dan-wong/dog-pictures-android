@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void logFirebaseEvent() {
         Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, dogBreed);
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, dogBreed);
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
     }
 }
