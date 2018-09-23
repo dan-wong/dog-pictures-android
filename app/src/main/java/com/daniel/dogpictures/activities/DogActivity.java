@@ -84,28 +84,6 @@ public class DogActivity extends AppCompatActivity implements RedditScraperCallb
         RedditScraper.getImagesFromSubreddit(this, dogBreed.getSubreddit(), "", this);
     }
 
-    private void checkInitialLaunch() {
-        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-        boolean firstLaunch = sharedPref.getBoolean(FIRST_LAUNCH, true);
-
-        if (firstLaunch) {
-            new AlertDialog.Builder(this)
-                    .setTitle("Hot Tip!")
-                    .setMessage("You can save the cute dogs by long pressing the image. A dialog will show up asking you if you want to save the image." +
-                            "To save the image, click 'Yes'.")
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.dismiss();
-                        }
-                    })
-                    .show();
-
-            SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putBoolean(FIRST_LAUNCH, false);
-            editor.apply();
-        }
-    }
-
     @OnClick(R.id.moreDogsButton)
     public void moreDogsButton() {
         if (currentImage + 1 >= redditImagesList.size()) {
@@ -127,7 +105,7 @@ public class DogActivity extends AppCompatActivity implements RedditScraperCallb
 
     @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     public void saveImage() {
-        if (currentImage <= 0) {
+        if (currentImage < 0) {
             return;
         }
 
@@ -164,13 +142,25 @@ public class DogActivity extends AppCompatActivity implements RedditScraperCallb
         new FileWriterAsyncTask(directory, image, this).execute();
     }
 
-    @Override
-    public void result(Boolean result) {
-        progressDialog.dismiss();
-        if (result) {
-            Toasty.success(this, getString(R.string.image_saved), Toast.LENGTH_SHORT, true).show();
-        } else {
-            Toasty.error(this, getString(R.string.an_error_occurred), Toast.LENGTH_SHORT, true).show();
+    private void checkInitialLaunch() {
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        boolean firstLaunch = sharedPref.getBoolean(FIRST_LAUNCH, true);
+
+        if (firstLaunch) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Hot Tip!")
+                    .setMessage("You can save the cute dogs by long pressing the image. A dialog will show up asking you if you want to save the image." +
+                            "To save the image, click 'Yes'.")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putBoolean(FIRST_LAUNCH, false);
+            editor.apply();
         }
     }
 
@@ -196,6 +186,16 @@ public class DogActivity extends AppCompatActivity implements RedditScraperCallb
                     }
                 })
                 .into(imageView);
+    }
+
+    @Override
+    public void result(Boolean result) {
+        progressDialog.dismiss();
+        if (result) {
+            Toasty.success(this, getString(R.string.image_saved), Toast.LENGTH_SHORT, true).show();
+        } else {
+            Toasty.error(this, getString(R.string.an_error_occurred), Toast.LENGTH_SHORT, true).show();
+        }
     }
 
     @Override
