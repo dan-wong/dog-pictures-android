@@ -6,9 +6,9 @@ android {
         applicationId "com.daniel.dogpictures"
         minSdkVersion 21
         targetSdkVersion 27
-        versionName '1.1.1.2'
+        versionName '1.2.1'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        versionCode 5
+        versionCode 8
     }
     buildTypes {
         release {

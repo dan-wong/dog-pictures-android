@@ -1,2 +1,2 @@
 -optimizationpasses 5
--allowaccessmodification
+-dontobfuscate

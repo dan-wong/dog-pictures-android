@@ -35,6 +35,10 @@ public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.dogBreedsSpinner) Spinner spinner;
 
+    static {
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,9 +47,6 @@ public class MainActivity extends AppCompatActivity {
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
-        if (mDatabase == null) {
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        }
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
@@ -79,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
     public void getDogsButton() {
         if (!InternetUtil.isOnline()) {
             Toasty.warning(getApplicationContext(), "No Internet Access!", Toast.LENGTH_SHORT, true).show();
+        } else if (dogBreed == null) {
+            Toasty.error(this, getString(R.string.an_error_occurred), Toast.LENGTH_SHORT, true).show();
         } else {
             logFirebaseEvent();
 
