@@ -2,15 +2,22 @@ package com.daniel.dogpictures.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.daniel.dogpictures.DogBreed;
 import com.daniel.dogpictures.R;
+import com.daniel.dogpictures.dogbreed.Breed;
+import com.daniel.dogpictures.dogbreed.DogBreeds;
 import com.daniel.dogpictures.util.InternetUtil;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -22,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String DOG_BREED = "com.daniel.dogpictures.dog.breed";
 
     private FirebaseAnalytics mFirebaseAnalytics;
+    private DatabaseReference mDatabase;
 
     private String dogBreed = "Corgi";
 
@@ -35,14 +43,33 @@ public class MainActivity extends AppCompatActivity {
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
-        setupSpinner();
+        if (mDatabase == null) {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        }
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                DogBreeds dogBreeds = DogBreeds.getInstance();
+                dogBreeds.clearList();
+                for (DataSnapshot breedDataSnapshot : dataSnapshot.getChildren()) {
+                    dogBreeds.addBreeds(breedDataSnapshot.getValue(Breed.class));
+                }
+                setupSpinner();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toasty.error(getApplicationContext(), "Something went wrong :o", Toast.LENGTH_SHORT, true).show();
+            }
+        });
     }
 
     private void setupSpinner() {
-        ArrayAdapter<DogBreed> adapter = new ArrayAdapter<>(
+        ArrayAdapter<Breed> adapter = new ArrayAdapter<>(
                 this,
                 R.layout.support_simple_spinner_dropdown_item,
-                DogBreed.values()
+                DogBreeds.getInstance().getBreeds()
         );
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);

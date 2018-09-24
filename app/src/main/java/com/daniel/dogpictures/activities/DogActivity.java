@@ -25,12 +25,13 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
-import com.daniel.dogpictures.DogBreed;
 import com.daniel.dogpictures.R;
 import com.daniel.dogpictures.RedditImage;
 import com.daniel.dogpictures.async.filewriter.FileWriter;
 import com.daniel.dogpictures.async.filewriter.FileWriterAsyncTask;
 import com.daniel.dogpictures.async.filewriter.FileWriterCallback;
+import com.daniel.dogpictures.dogbreed.Breed;
+import com.daniel.dogpictures.dogbreed.DogBreeds;
 import com.daniel.dogpictures.redditscraper.RedditScraper;
 import com.daniel.dogpictures.redditscraper.RedditScraperCallback;
 
@@ -64,7 +65,7 @@ public class DogActivity extends AppCompatActivity implements RedditScraperCallb
     @BindView(R.id.moreDogsButton) Button moreDogsButton;
 
     private int currentImage = -1;
-    private DogBreed dogBreed;
+    private Breed dogBreed;
     private ProgressDialog progressDialog;
 
     @Override
@@ -75,13 +76,13 @@ public class DogActivity extends AppCompatActivity implements RedditScraperCallb
 
         checkInitialLaunch();
 
-        dogBreed = DogBreed.fromString(getIntent().getStringExtra(MainActivity.DOG_BREED));
-        setTitle(dogBreed.getName());
+        dogBreed = DogBreeds.getInstance().getBreedFromString(getIntent().getStringExtra(MainActivity.DOG_BREED));
+        setTitle(dogBreed.name);
 
         moreDogsButton.setEnabled(false);
         progressBar.setVisibility(View.VISIBLE);
 
-        RedditScraper.getImagesFromSubreddit(this, dogBreed.getSubreddit(), "", this);
+        RedditScraper.getImagesFromSubreddit(this, dogBreed.subreddit, "", this);
     }
 
     @OnClick(R.id.moreDogsButton)
@@ -89,7 +90,7 @@ public class DogActivity extends AppCompatActivity implements RedditScraperCallb
         if (currentImage + 1 >= redditImagesList.size()) {
             RedditScraper.getImagesFromSubreddit(
                     this,
-                    dogBreed.getSubreddit(),
+                    dogBreed.subreddit,
                     redditImagesList.get(redditImagesList.size() - 1).id,
                     this);
         } else {
