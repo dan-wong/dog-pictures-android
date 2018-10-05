@@ -20,7 +20,7 @@ import java.util.List;
 
 public class RedditScraper {
     private static final String ENDPOINT_URL_FORMAT = "https://www.reddit.com/r/%s/.json?limit=%d&after=%s";
-    private static final int LIMIT = 5;
+    private static final int LIMIT = 20;
 
     public static void getImagesFromSubreddit(Context context, String subreddit, String lastImageID, final RedditScraperCallback callback) {
         RequestQueue queue = Volley.newRequestQueue(context);

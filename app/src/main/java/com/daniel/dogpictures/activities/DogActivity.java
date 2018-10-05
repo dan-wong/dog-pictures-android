@@ -77,6 +77,10 @@ public class DogActivity extends AppCompatActivity implements RedditScraperCallb
         checkInitialLaunch();
 
         dogBreed = DogBreeds.getInstance().getBreedFromString(getIntent().getStringExtra(MainActivity.DOG_BREED));
+        if (dogBreed == null) {
+            Toasty.error(this, getString(R.string.an_error_occurred), Toast.LENGTH_SHORT, true).show();
+            finish();
+        }
         setTitle(dogBreed.name);
 
         moreDogsButton.setEnabled(false);
@@ -202,7 +206,7 @@ public class DogActivity extends AppCompatActivity implements RedditScraperCallb
     @Override
     public void imagesReturned(List<RedditImage> images) {
         if (images == null || images.size() == 0) {
-            Toasty.error(getApplicationContext(), getString(R.string.an_error_occurred), Toast.LENGTH_SHORT, true).show();
+            Toasty.info(getApplicationContext(), "That's all the images :(", Toast.LENGTH_SHORT, true).show();
             finish();
             return;
         }
